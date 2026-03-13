@@ -72,4 +72,110 @@ The repository also includes a larger test dataset:
 
 `sample_auth_large.log`
 
-This file contains a la
+This file contains a larger volume of authentication events and can be used to stress-test the detection logic.
+
+To analyze the larger dataset, modify one line in `main.py`.
+
+Current configuration:
+
+```python
+log_file = "sample_auth.log"
+```
+
+Change it to:
+
+```python
+log_file = "sample_auth_large.log"
+```
+
+Then run the script again:
+
+```
+python main.py
+```
+
+This will process the larger log file and generate additional detection alerts and CSV output entries.
+
+---
+
+## Detection Output
+
+Detected suspicious login activity is exported to CSV for further investigation and can be viewed in spreadsheet tools.
+
+Example output:
+
+![Detection Output](images/detection-output-sheets.png)
+
+Example records:
+
+| IP Address     | Failed Attempts | Severity |
+| -------------- | --------------- | -------- |
+| 185.234.219.12 | 5               | HIGH     |
+| 192.168.1.44   | 3               | MEDIUM   |
+
+---
+
+## Key Implementation Components
+
+### Log Parsing Logic
+
+![Parser Code](images/parser-code.png)
+
+### Failed Login Aggregation
+
+![Detection Logic](images/detection-logic-code.png)
+
+### Alert Classification
+
+![Alert Classification](images/alert-classification.png)
+
+---
+
+## Assumptions
+
+This parser assumes **one authentication event per line**, consistent with standard Linux `auth.log` SSH entries.
+
+---
+
+## Potential Detection Improvements
+
+Possible future enhancements to this detection logic include:
+
+* Time-based thresholds (e.g., multiple failures within a short time window)
+* Correlating failed attempts across multiple usernames from the same IP
+* GeoIP enrichment to identify suspicious geographic login sources
+* Real-time monitoring of authentication logs rather than offline analysis
+
+---
+
+## Limitations
+
+* The parser assumes a consistent SSH log structure
+* Log parsing relies on fixed field positions within the log line
+* The script performs offline log analysis rather than real-time monitoring
+
+---
+
+## Output
+
+The script produces:
+
+* Terminal detection alerts
+* A CSV file: `output/detections.csv`
+
+Example terminal alerts:
+
+```
+ALERT: Suspicious SSH Activity Detected
+IP Address: 185.234.219.12
+Failed Attempts: 5
+Severity: HIGH
+----------------------------------
+
+ALERT: Suspicious SSH Activity Detected
+IP Address: 192.168.1.44
+Failed Attempts: 3
+Severity: MEDIUM
+----------------------------------
+```
+

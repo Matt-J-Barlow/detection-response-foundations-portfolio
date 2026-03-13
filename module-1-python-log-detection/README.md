@@ -64,6 +64,37 @@ Example execution:
 
 ![Terminal Execution](images/terminal-run-updated.png)
 
+## Using the Larger Log Dataset (Optional)
+
+The repository also includes a larger test dataset:
+
+`sample_auth_large.log`
+
+This file contains a much larger number of authentication events and can be used to stress-test the detection logic.
+
+To analyze the larger dataset, modify one line in `main.py`.
+
+Current configuration:
+
+```python
+log_file = "sample_auth.log"
+```
+
+Change it to:
+
+```python
+log_file = "sample_auth_large.log"
+```
+
+Then run the script again:
+
+```
+python main.py
+```
+
+This will process the larger log file and produce a greater number of detection alerts and CSV output entries.
+
+
 ---
 
 # Detection Output

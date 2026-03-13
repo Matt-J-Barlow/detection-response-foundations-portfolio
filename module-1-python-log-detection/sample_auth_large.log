@@ -1,0 +1,31 @@
+Jan 10 12:00:01 server sshd[1234]: Failed password for invalid user admin from 185.234.219.12 port 53422 ssh2
+Jan 10 12:00:02 server sshd[1235]: Failed password for invalid user admin from 185.234.219.12 port 53423 ssh2
+Jan 10 12:00:03 server sshd[1236]: Failed password for invalid user admin from 185.234.219.12 port 53424 ssh2
+Jan 10 12:00:04 server sshd[1237]: Failed password for invalid user admin from 185.234.219.12 port 53425 ssh2
+Jan 10 12:00:05 server sshd[1238]: Failed password for invalid user admin from 185.234.219.12 port 53426 ssh2
+Jan 10 12:01:01 server sshd[2234]: Failed password for root from 45.77.22.91 port 53301 ssh2
+Jan 10 12:01:02 server sshd[2235]: Failed password for root from 45.77.22.91 port 53302 ssh2
+Jan 10 12:01:03 server sshd[2236]: Failed password for root from 45.77.22.91 port 53303 ssh2
+Jan 10 12:01:04 server sshd[2237]: Failed password for root from 45.77.22.91 port 53304 ssh2
+Jan 10 12:02:01 server sshd[3234]: Failed password for ubuntu from 192.168.1.44 port 54001 ssh2
+Jan 10 12:02:02 server sshd[3235]: Failed password for ubuntu from 192.168.1.44 port 54002 ssh2
+Jan 10 12:02:03 server sshd[3236]: Failed password for ubuntu from 192.168.1.44 port 54003 ssh2
+Jan 10 12:03:01 server sshd[4234]: Failed password for invalid user test from 88.214.193.12 port 54101 ssh2
+Jan 10 12:03:02 server sshd[4235]: Failed password for invalid user test from 88.214.193.12 port 54102 ssh2
+Jan 10 12:03:03 server sshd[4236]: Failed password for invalid user test from 88.214.193.12 port 54103 ssh2
+Jan 10 12:03:04 server sshd[4237]: Failed password for invalid user test from 88.214.193.12 port 54104 ssh2
+Jan 10 12:03:05 server sshd[4238]: Failed password for invalid user test from 88.214.193.12 port 54105 ssh2
+Jan 10 12:04:01 server sshd[5234]: Accepted password for matt from 10.0.0.15 port 55001 ssh2
+Jan 10 12:04:10 server sshd[5235]: Accepted password for admin from 10.0.0.18 port 55002 ssh2
+Jan 10 12:05:01 server sshd[6234]: Failed password for root from 103.214.45.67 port 55101 ssh2
+Jan 10 12:05:02 server sshd[6235]: Failed password for root from 103.214.45.67 port 55102 ssh2
+Jan 10 12:05:03 server sshd[6236]: Failed password for root from 103.214.45.67 port 55103 ssh2
+Jan 10 12:05:04 server sshd[6237]: Failed password for root from 103.214.45.67 port 55104 ssh2
+Jan 10 12:06:01 server sshd[7234]: Failed password for invalid user guest from 212.83.41.90 port 55201 ssh2
+Jan 10 12:06:02 server sshd[7235]: Failed password for invalid user guest from 212.83.41.90 port 55202 ssh2
+Jan 10 12:06:03 server sshd[7236]: Failed password for invalid user guest from 212.83.41.90 port 55203 ssh2
+Jan 10 12:07:01 server sshd[8234]: Accepted password for developer from 10.0.0.25 port 55301 ssh2
+Jan 10 12:07:05 server sshd[8235]: Failed password for root from 45.77.22.91 port 55302 ssh2
+Jan 10 12:07:06 server sshd[8236]: Failed password for root from 45.77.22.91 port 55303 ssh2
+Jan 10 12:07:07 server sshd[8237]: Failed password for root from 45.77.22.91 port 55304 ssh2
+Jan 10 12:07:08 server sshd[8238]: Failed password for root from 45.77.22.91 port 55305 ssh2

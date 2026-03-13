@@ -110,7 +110,13 @@ def main():
 
     # iterate through the alert list and display the results
     for alert in alerts:
-        print(alert)
+        for ip, count, severity in alerts:
+
+    print("ALERT: Suspicious SSH Activity Detected")
+    print(f"IP Address: {ip}")
+    print(f"Failed Attempts: {count}")
+    print(f"Severity: {severity}")
+    print("----------------------------------")
 
     # import the csv module so we can write detection results to a file
     import csv

@@ -62,7 +62,7 @@ python main.py
 
 Example execution:
 
-![Terminal Execution](images/terminal-run.png)
+![Terminal Execution](images/terminal-run-updated.png)
 
 ---
 

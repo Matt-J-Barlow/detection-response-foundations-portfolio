@@ -80,3 +80,58 @@ def classify_severity(failed_attempts):
       alerts.append((ip, count, severity))
       
     return alerts
+
+# main execution pipeline that runs the entire detection workflow
+def main():
+
+    # specify the log file that will be analyzed
+    log_file = "sample_auth.log"
+
+    # read the contents of the log file and store each line in a list
+    lines = read_log_file(log_file)
+
+    # create an empty list to store parsed authentication events
+    parsed_events = []
+
+    # loop through each line from the log file
+    for line in lines:
+
+        # send the line to the parser function to extract event data
+        event = parse_log_line(line)
+
+        # add the parsed event (or None if irrelevant) to the list
+        parsed_events.append(event)
+
+    # aggregate failed login attempts by IP address
+    failed_attempts = detect_failed_logins(parsed_events)
+
+    # classify IP addresses into severity levels based on thresholds
+    alerts = classify_severity(failed_attempts)
+
+    # iterate through the alert list and display the results
+    for alert in alerts:
+        print(alert)
+
+    # import the csv module so we can write detection results to a file
+    import csv
+
+    # open the output file in write mode
+    # newline="" prevents blank lines being inserted on some systems
+    with open("output/detections.csv", "w", newline="") as file:
+
+        # create a CSV writer object
+        writer = csv.writer(file)
+
+        # write the header row so the output is readable
+        writer.writerow(["IP Address", "Failed Attempts", "Severity"])
+
+        # loop through each alert tuple and write it to the CSV file
+        for alert in alerts:
+
+            # write each alert record to the CSV file
+            writer.writerow(alert)
+            
+# this ensures the script only runs when executed directly,
+# not when imported as a module in another Python file
+if __name__ == "__main__":
+    main()

@@ -8,7 +8,7 @@ The script reads authentication logs, aggregates failed login attempts by IP add
 
 ## Objective
 
-Build a simple SOC-style detection script that:
+Build a simple SOC-style detection tool that:
 
 * Parses Linux `auth.log` authentication events
 * Identifies failed SSH login attempts
@@ -33,13 +33,13 @@ This simulates a simplified brute-force detection rule similar to those implemen
 
 ## Detection Pipeline
 
-The script runs the following workflow:
+The script executes the following workflow:
 
 1. **read_log_file()**
    Reads the authentication log file line-by-line.
 
 2. **parse_log_line()**
-   Extracts event type, username, and source IP address from SSH log entries.
+   Extracts event type, username, and source IP address from SSH authentication events.
 
 3. **detect_failed_logins()**
    Aggregates failed login attempts by source IP address.
@@ -48,7 +48,7 @@ The script runs the following workflow:
    Applies detection thresholds and assigns alert severity.
 
 5. **main()**
-   Executes the detection pipeline and outputs the results.
+   Executes the detection workflow and outputs the results.
 
 ---
 
@@ -64,117 +64,12 @@ Example execution:
 
 ![Terminal Execution](images/terminal-run-updated.png)
 
+---
+
 ## Using the Larger Log Dataset (Optional)
 
 The repository also includes a larger test dataset:
 
 `sample_auth_large.log`
 
-This file contains a much larger number of authentication events and can be used to stress-test the detection logic.
-
-To analyze the larger dataset, modify one line in `main.py`.
-
-Current configuration:
-
-```python
-log_file = "sample_auth.log"
-```
-
-Change it to:
-
-```python
-log_file = "sample_auth_large.log"
-```
-
-Then run the script again:
-
-```
-python main.py
-```
-
-This will process the larger log file and produce a greater number of detection alerts and CSV output entries.
-
-
----
-
-## Detection Output
-
-Detected suspicious login activity is exported to CSV and can be viewed in spreadsheet tools.
-
-Example output:
-
-![Detection Output](images/detection-output-sheets.png)
-
-Example records:
-
-| IP Address     | Failed Attempts | Severity |
-| -------------- | --------------- | -------- |
-| 185.234.219.12 | 5               | HIGH     |
-| 192.168.1.44   | 3               | MEDIUM   |
-
----
-
-## Code Examples
-
-### Log Parsing Logic
-
-![Parser Code](images/parser-code.png)
-
-### Failed Login Aggregation
-
-![Detection Logic](images/detection-logic-code.png)
-
-### Alert Classification
-
-![Alert Classification](images/alert-classification.png)
-
----
-
-## Assumptions
-
-This parser assumes **one authentication event per line**, consistent with standard Linux `auth.log` SSH entries.
-
----
-
-## Potential Detection Improvements
-
-Possible future enhancements to this detection logic include:
-
-* Time-based thresholds (e.g., multiple failures within a short time window)
-* Correlating failed attempts across multiple usernames from the same IP
-* GeoIP enrichment for identifying suspicious geographic sources
-* Real-time monitoring of authentication logs rather than offline analysis
-
----
-
-## Limitations
-
-* The parser assumes a consistent SSH log structure
-* Log parsing relies on fixed field positions within the log line
-* The script performs offline log analysis rather than real-time monitoring
-
----
-
-## Output
-
-The script produces:
-
-* Terminal detection alerts
-* A CSV file: `output/detections.csv`
-
-Example terminal alerts:
-
-```
-
-ALERT: Suspicious SSH Activity Detected
-IP Address: 185.234.219.12
-Failed Attempts: 5
-Severity: HIGH
-----------------------------------
-
-ALERT: Suspicious SSH Activity Detected
-IP Address: 192.168.1.44
-Failed Attempts: 3
-Severity: MEDIUM
-----------------------------------
-``` 
+This file contains a la

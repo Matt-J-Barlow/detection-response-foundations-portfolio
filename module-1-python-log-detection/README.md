@@ -1,4 +1,4 @@
-# Module 1 — Python Log Detection
+## Module 1 — Python Log Detection
 
 This module demonstrates a Python-based detection workflow that parses Linux SSH authentication logs and identifies suspicious login activity such as brute-force attempts.
 
@@ -6,7 +6,7 @@ The script reads authentication logs, aggregates failed login attempts by IP add
 
 ---
 
-# Objective
+## Objective
 
 Build a simple SOC-style detection script that:
 
@@ -18,7 +18,7 @@ Build a simple SOC-style detection script that:
 
 ---
 
-# Detection Logic
+## Detection Logic
 
 The detection logic applies the following thresholds:
 
@@ -27,11 +27,11 @@ The detection logic applies the following thresholds:
 | 3–4 attempts    | MEDIUM   |
 | 5+ attempts     | HIGH     |
 
-This simulates a basic brute-force detection rule similar to what might exist in a SIEM detection pipeline.
+This simulates a simplified brute-force detection rule similar to those implemented in SIEM or log analysis pipelines.
 
 ---
 
-# Detection Pipeline
+## Detection Pipeline
 
 The script runs the following workflow:
 
@@ -52,7 +52,7 @@ The script runs the following workflow:
 
 ---
 
-# Script Execution
+## Script Execution
 
 The script is executed from the terminal using:
 
@@ -97,7 +97,7 @@ This will process the larger log file and produce a greater number of detection 
 
 ---
 
-# Detection Output
+## Detection Output
 
 Detected suspicious login activity is exported to CSV and can be viewed in spreadsheet tools.
 
@@ -114,7 +114,7 @@ Example records:
 
 ---
 
-# Code Examples
+## Code Examples
 
 ### Log Parsing Logic
 
@@ -130,13 +130,24 @@ Example records:
 
 ---
 
-# Assumptions
+## Assumptions
 
 This parser assumes **one authentication event per line**, consistent with standard Linux `auth.log` SSH entries.
 
 ---
 
-# Limitations
+## Potential Detection Improvements
+
+Possible future enhancements to this detection logic include:
+
+* Time-based thresholds (e.g., multiple failures within a short time window)
+* Correlating failed attempts across multiple usernames from the same IP
+* GeoIP enrichment for identifying suspicious geographic sources
+* Real-time monitoring of authentication logs rather than offline analysis
+
+---
+
+## Limitations
 
 * The parser assumes a consistent SSH log structure
 * Log parsing relies on fixed field positions within the log line
@@ -144,7 +155,7 @@ This parser assumes **one authentication event per line**, consistent with stand
 
 ---
 
-# Output
+## Output
 
 The script produces:
 
@@ -154,6 +165,16 @@ The script produces:
 Example terminal alerts:
 
 ```
-('185.234.219.12', 5, 'HIGH')
-('192.168.1.44', 3, 'MEDIUM')
+
+ALERT: Suspicious SSH Activity Detected
+IP Address: 185.234.219.12
+Failed Attempts: 5
+Severity: HIGH
+----------------------------------
+
+ALERT: Suspicious SSH Activity Detected
+IP Address: 192.168.1.44
+Failed Attempts: 3
+Severity: MEDIUM
+----------------------------------
 ``` 

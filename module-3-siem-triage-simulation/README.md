@@ -46,9 +46,14 @@ Each scenario follows a consistent triage structure:
 
 ## Scenarios Included
 
-- Scenario 1 — Suspicious PowerShell Execution  
-- Scenario 2 — *(In Progress)*  
-- Scenario 3 — *(In Progress)*  
+**Scenario 1 — Suspicious PowerShell Execution**  
+  High-confidence malicious activity involving obfuscated PowerShell execution and confirmed command-and-control (C2) communication.
+
+- **Scenario 2 — Unusual Administrative Logon Activity**  
+  Investigation of potentially suspicious remote logon behavior without confirmed threat intelligence, requiring baseline analysis and false positive evaluation.
+
+- **Scenario 3 — Suspicious Lateral Movement Indicators**  
+  Multi-event correlation scenario involving authentication events and process activity to identify potential lateral movement within the environment.  
 
 ---
 

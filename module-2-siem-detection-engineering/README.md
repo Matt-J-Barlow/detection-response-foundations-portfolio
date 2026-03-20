@@ -33,7 +33,36 @@ Windows Security Logs
 ---
 
 ### Splunk Detection Logic
-(paste your query here — we are about to finish it)
+```sql
+index=windows sourcetype=WinEventLog:Security EventCode=4624
+| search Logon_Type IN (3, 10)
+| eval hour=tonumber(strftime(_time,"%H"))
+| where hour < 8 OR hour > 17
+| stats earliest(_time) as first_seen latest(_time) as last_seen count by Account_Name, Source_Network_Address, Logon_Type
+| where count = 1
+```
+
+---
+
+### Detection Logic Explanation
+This query identifies successful remote logons (Logon Type 3 and 10) occurring outside business hours and highlights rare user/IP combinations within the search window. By filtering for events that occur only once, it surfaces potentially unusual or unauthorized access attempts while reducing noise from normal repeated activity.
+
+---
+
+### Baseline / Hunting Query
+```sql
+index=windows sourcetype=WinEventLog:Security EventCode=4624
+| search Logon_Type IN (3, 10)
+| stats count by Account_Name, Source_Network_Address
+| sort - count
+```
+
+This query helps establish normal remote logon patterns by showing the most frequently used source IPs per user. It can be used to distinguish common behavior from rare or anomalous logons.
+
+---
+
+### Improvement Note
+A production-level detection would compare each login against historical data to identify source IP addresses not previously observed for that specific user. This implementation approximates that behavior by highlighting rare user/IP combinations within the available dataset.
 
 ---
 

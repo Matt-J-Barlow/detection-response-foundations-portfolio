@@ -1,0 +1,82 @@
+### Detection Name
+Suspicious Remote Logon Detection
+
+---
+
+### Threat Scenario
+An attacker uses valid credentials to access systems remotely and move laterally across the network.
+
+---
+
+### Detection Objective
+Detect suspicious successful remote logons because they may indicate unauthorized access using compromised credentials.
+
+---
+
+### Log Source
+Windows Security Logs
+
+---
+
+### Primary Event ID
+4624 – Successful logon
+
+---
+
+### Suspicious Signals
+- Logon Type 3 (network) or 10 (RDP)
+- Logon occurs outside business hours
+- Source IP not previously observed for the user
+
+---
+
+### Splunk Detection Logic
+```sql
+index=windows sourcetype=WinEventLog:Security EventCode=4624
+| search Logon_Type IN (3, 10)
+| eval hour=tonumber(strftime(_time,"%H"))
+| where hour < 8 OR hour > 17
+| stats earliest(_time) as first_seen latest(_time) as last_seen count by Account_Name, Source_Network_Address, Logon_Type
+| where count = 1
+```
+
+---
+
+### Detection Logic Explanation
+This query identifies successful remote logons (Logon Type 3 and 10) occurring outside business hours and highlights rare user/IP combinations within the search window. By filtering for events that occur only once, it surfaces potentially unusual or unauthorized access attempts while reducing noise from normal repeated activity.
+
+---
+
+### Baseline / Hunting Query
+```sql
+index=windows sourcetype=WinEventLog:Security EventCode=4624
+| search Logon_Type IN (3, 10)
+| stats count by Account_Name, Source_Network_Address
+| sort - count
+```
+
+This query helps establish normal remote logon patterns by showing the most frequently used source IPs per user. It can be used to distinguish common behavior from rare or anomalous logons.
+
+---
+
+### Improvement Note
+A production-level detection would compare each login against historical data to identify source IP addresses not previously observed for that specific user. This implementation approximates that behavior by highlighting rare user/IP combinations within the available dataset.
+
+---
+
+### False Positives
+- IT administrator accessing systems remotely
+- Employee connecting via VPN from a new location
+
+---
+
+### MITRE ATT&CK Mapping
+- Tactic: Lateral Movement
+- Technique: Remote Services (T1021)
+
+---
+
+### Tuning Considerations
+- Whitelist known admin accounts
+- Exclude known corporate/VPN IP ranges
+- Baseline normal user login patterns

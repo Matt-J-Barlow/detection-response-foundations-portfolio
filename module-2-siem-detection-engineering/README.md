@@ -1,15 +1,12 @@
 ## Module 2 — SIEM Detection Engineering
 
-This module demonstrates the design and implementation of SIEM-based detection rules using Windows Security Event Logs. The focus is on identifying suspicious behavior through log analysis, including credential abuse, lateral movement, and privilege escalation.
+This module demonstrates the design and implementation of SIEM-based detection rules using Windows Security Event Logs. The focus is on identifying suspicious behavior through authentication and privilege-related events, with an emphasis on real-world SOC detection logic.
 
-Two detection rules are developed:
-
-- Detection 1: Suspicious Remote Logon (Event ID 4624)
-- Detection 2: Privileged Logon Anomaly (Event ID 4672)
+The detections in this module progress from single-event analysis to basic event correlation, reflecting how modern SOC teams identify abnormal behavior across multiple signals.
 
 ---
 
-# Detection 1 — Suspicious Remote Logon Detection
+# Detection 1 — Suspicious Remote Logon Detection (Event ID 4624)
 
 ### Threat Scenario
 An attacker uses valid credentials to access systems remotely and move laterally across the network.
@@ -34,7 +31,7 @@ Windows Security Logs
 ### Suspicious Signals
 - Logon Type 3 (network) or 10 (RDP)
 - Logon occurs outside business hours
-- Source IP not previously observed for the user
+- Source IP not previously observed for the user (approximated via rarity)
 
 ---
 
@@ -63,38 +60,38 @@ index=windows sourcetype=WinEventLog:Security EventCode=4624
 | sort - count
 ```
 
-This query helps establish normal remote logon patterns by showing the most frequently used source IPs per user.
+This query establishes normal remote logon behavior by identifying commonly used IP addresses per user, supporting detection tuning and false positive reduction.
 
 ---
 
 ### False Positives
-- IT administrator accessing systems remotely
-- Employee connecting via VPN from a new location
+- IT administrators accessing systems remotely
+- Employees connecting via VPN from new locations
 
 ---
 
 ### MITRE ATT&CK Mapping
-- Tactic: Lateral Movement
+- Tactic: Lateral Movement  
 - Technique: Remote Services (T1021)
 
 ---
 
 ### Tuning Considerations
-- Whitelist known admin accounts
-- Exclude known corporate/VPN IP ranges
-- Baseline normal user login patterns
+- Whitelist known administrative accounts
+- Exclude corporate VPN and internal IP ranges
+- Baseline normal user login patterns over time
 
 ---
 
-# Detection 2 — Privileged Logon Anomaly Detection
+# Detection 2 — Correlated Privileged Logon Detection (4624 + 4672)
 
 ### Threat Scenario
-An attacker gains access to a system and obtains elevated privileges, potentially indicating privilege escalation or misuse of administrative accounts.
+An attacker gains access to a system using valid credentials and is assigned elevated privileges, indicating potential misuse of administrative access or privilege escalation.
 
 ---
 
 ### Detection Objective
-Detect privileged logons because they may indicate unauthorized elevation of access or misuse of high-privilege accounts.
+Detect correlated successful and privileged logons because they may indicate unauthorized elevation of access or compromised administrative credentials.
 
 ---
 
@@ -103,51 +100,60 @@ Windows Security Logs
 
 ---
 
-### Primary Event ID
-4672 – Special privileges assigned to new logon
+### Primary Event IDs
+- 4624 – Successful logon  
+- 4672 – Special privileges assigned to new logon  
 
 ---
 
 ### Suspicious Signals
-- Privileged logon occurs outside business hours
-- Account is not a known administrative account
-- Logon originates from an unusual host
+- Successful logon followed by privileged access on the same host
+- Activity occurs outside business hours
+- Repeated or clustered authentication activity
 
 ---
 
 ### Splunk Detection Logic
 ```sql
-index=windows sourcetype=WinEventLog:Security EventCode=4672
+index=windows sourcetype=WinEventLog:Security (EventCode=4624 OR EventCode=4672)
 | eval hour=tonumber(strftime(_time,"%H"))
 | where hour < 8 OR hour > 17
-| stats count by Account_Name, ComputerName
+| stats count values(EventCode) as events earliest(_time) as first_seen latest(_time) as last_seen by Account_Name, ComputerName
+| where mvcount(events) > 1 AND count >= 2
 ```
 
 ---
 
 ### Detection Logic Explanation
-This query identifies privileged logons (Event ID 4672) occurring outside normal business hours. Since privileged access is typically restricted and predictable, unusual timing or accounts can indicate potential misuse or escalation.
+This query correlates successful logon events (4624) with privileged logon events (4672) occurring on the same host outside business hours. By requiring both event types and multiple occurrences, it strengthens detection of potentially unauthorized privileged access while reducing isolated noise from single events.
 
 ---
 
 ### False Positives
-- System administrators performing maintenance outside business hours
-- Automated processes or scheduled administrative tasks
+- System administrators performing scheduled maintenance
+- Automated administrative tasks or service account activity
 
 ---
 
 ### MITRE ATT&CK Mapping
-- Tactic: Privilege Escalation
+- Tactic: Privilege Escalation  
 - Technique: Valid Accounts (T1078)
 
 ---
 
 ### Tuning Considerations
-- Whitelist known administrative/service accounts
-- Monitor expected maintenance windows
-- Correlate with other events such as 4624 or 4688 for context
+- Whitelist known administrative and service accounts
+- Align detection with approved maintenance windows
+- Correlate with process creation events (4688) for deeper validation
 
 ---
 
-### Improvement Note
-A production-level detection would correlate privileged logons with preceding authentication events and historical user behavior to better identify abnormal privilege usage patterns.
+## Improvement Note
+
+A production-level implementation would incorporate historical baselining to identify deviations in user behavior over time, including new source IP addresses, unusual host access patterns, and abnormal privilege usage. Additional correlation with process execution (Event ID 4688) and authentication failures (4625) would further improve detection accuracy.
+
+---
+
+## Key Learning Outcome
+
+This module demonstrates the transition from single-event detection to multi-event correlation, reflecting real-world SOC practices where context, timing, and behavioral patterns are critical for identifying true security threats.

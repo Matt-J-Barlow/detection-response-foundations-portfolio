@@ -137,3 +137,50 @@ The activity does not present clear indicators of compromise but deviates from e
 - Professional and defensible incident analysis  
 
 ---
+
+## 6. Evidence & Telemetry
+
+### Process Execution
+
+```text
+Process: powershell.exe
+Parent: explorer.exe
+User: admin.svc
+```
+
+---
+
+### Command Line Execution
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Scripts\backup.ps1
+```
+
+---
+
+### Script Location
+
+```text
+C:\Scripts\backup.ps1
+```
+
+---
+
+### Network Activity
+
+```text
+Destination IP: 10.0.5.12
+Type: Internal file server
+```
+
+---
+
+### Notable Absences
+
+```text
+- No external IP communication
+- No IEX or DownloadString usage
+- No obfuscation or encoded commands
+```
+
+---

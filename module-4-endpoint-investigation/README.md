@@ -176,25 +176,6 @@ And strengthens readiness for:
 
 ---
 
-## Repository Structure
-
-```
-module-4-endpoint-monitoring/
-
-│── README.md
-│
-│── scenario-1-suspicious-process-execution/
-│     └── scenario.md
-│
-│── scenario-2-ambiguous-activity/
-│     └── scenario.md
-│
-│── scenario-3-persistence-correlation/
-│     └── scenario.md
-```
-
----
-
 ## Notes
 
 - All scenarios are based on realistic attack patterns observed in enterprise environments  

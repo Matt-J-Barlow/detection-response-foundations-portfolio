@@ -1,23 +1,40 @@
 # Module 4 — Endpoint Monitoring & Host Visibility
 
+---
+
 ## Overview
 
 This module demonstrates endpoint-level detection and investigation using host telemetry.  
 The focus is on analyzing process execution, command-line activity, and behavioral patterns to identify potentially malicious activity on a compromised system.
 
-Unlike previous modules, this work emphasizes **host-based reasoning** rather than log aggregation or alert triage alone.
+Unlike previous modules, this work emphasizes host-based reasoning rather than log aggregation or alert triage alone.
+
+This module simulates real-world endpoint investigations using representative telemetry based on common enterprise attack patterns.
+
+---
+
+## What Makes This Module Different
+
+Unlike traditional SIEM-focused analysis, this module emphasizes host-level visibility and behavioral reasoning.
+
+The scenarios require:
+
+- Correlating multiple low-signal events  
+- Interpreting attacker intent from process behavior  
+- Making defensible decisions under uncertainty  
+
+This reflects real SOC and MDR investigation workflows.
 
 ---
 
 ## Objectives
 
-- Analyze endpoint telemetry to identify suspicious activity  
-- Understand process creation events (Sysmon Event ID 1, Event ID 4688)  
-- Investigate parent-child process relationships  
-- Interpret command-line arguments for malicious intent  
-- Identify living-off-the-land techniques (LOLBins)  
-- Correlate execution, network, and post-execution behavior  
-- Assess risk based on both technical and business context  
+- Perform endpoint-level investigation using host telemetry  
+- Identify malicious behavior through process execution and command-line analysis  
+- Correlate process, network, and file activity into a coherent attack chain  
+- Distinguish between legitimate and malicious activity in ambiguous scenarios  
+- Identify persistence mechanisms and attacker tradecraft on endpoints  
+- Produce SOC-ready, defensible analysis  
 
 ---
 
@@ -53,7 +70,19 @@ Unlike previous modules, this work emphasizes **host-based reasoning** rather th
 
 ### Persistence & Execution Indicators
 - Execution from temporary directories  
+- Scheduled task persistence  
 - Suspicious use of system binaries  
+
+---
+
+## Key Techniques Covered
+
+- Macro-based initial access  
+- Fileless execution via PowerShell  
+- Living-off-the-land binaries (LOLBins)  
+- Scheduled task persistence  
+- Internal vs external behavior analysis  
+- Ambiguous alert triage  
 
 ---
 
@@ -121,9 +150,9 @@ Multi-event endpoint investigation involving persistence mechanisms and chained 
 
 This module demonstrates the ability to:
 
-- Move beyond alerts into **host-level investigation**  
-- Understand how attacks execute on endpoints  
-- Translate technical behavior into **defensible security decisions**  
+- Move beyond alerts into host-level investigation  
+- Understand how attacks execute and persist on endpoints  
+- Translate technical findings into defensible security decisions  
 
 These are core skills required for:
 
@@ -155,13 +184,13 @@ module-4-endpoint-monitoring/
 │── README.md
 │
 │── scenario-1-suspicious-process-execution/
-│     ├── scenario.md
+│     └── scenario.md
 │
 │── scenario-2-ambiguous-activity/
-│     ├── scenario.md
+│     └── scenario.md
 │
 │── scenario-3-persistence-correlation/
-│     ├── scenario.md
+│     └── scenario.md
 ```
 
 ---
@@ -169,5 +198,8 @@ module-4-endpoint-monitoring/
 ## Notes
 
 - All scenarios are based on realistic attack patterns observed in enterprise environments  
-- Analysis focuses on **observable behavior and evidence**, not assumptions  
-- Conclusions are written to be **defensible in a SOC or interview setting**
+- Analysis focuses on observable behavior and evidence, not assumptions  
+- Evidence sections are included to demonstrate how conclusions are derived from observable telemetry  
+- Conclusions are written to be defensible in a SOC or interview setting  
+
+---

